@@ -1,6 +1,6 @@
 <?php
-require 'config.php'; // Include the database configuration
-session_start(); // Start the session
+require 'config.php'; 
+session_start(); 
 
 $errors = [];
 
@@ -18,17 +18,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($errors)) {
         try {
-            // Check if the user exists
+         
             $stmt = $pdo->prepare("SELECT * FROM users WHERE username = :username");
             $stmt->execute([':username' => $username]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($user && password_verify($password, $user['password'])) {
-                // Set session variables
+               
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['username'] = $user['username'];
 
-                // Redirect to the home page
+               
                 header("Location: index.php");
                 exit;
             } else {

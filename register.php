@@ -1,7 +1,6 @@
 <?php
-require 'config.php'; // Include the database configuration
+require 'config.php'; 
 
-// Initialize variables
 $errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -9,7 +8,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = trim($_POST['password']);
     $confirm_password = trim($_POST['confirm_password']);
 
-    // Validate inputs
     if (empty($username)) {
         $errors[] = "Username is required.";
     }
@@ -20,24 +18,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = "Passwords do not match.";
     }
 
-    // If no errors, process registration
     if (empty($errors)) {
         try {
-            // Hash the password
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-            // Insert user into the database
             $stmt = $pdo->prepare("INSERT INTO users (username, password) VALUES (:username, :password)");
             $stmt->execute([
                 ':username' => $username,
                 ':password' => $hashed_password,
             ]);
 
-            // Redirect to login page or success message
             echo "Registration successful! <a href='login.php'>Login here</a>";
             exit;
         } catch (PDOException $e) {
-            if ($e->getCode() == 23000) { // Duplicate entry
+            if ($e->getCode() == 23000) {
                 $errors[] = "Username already exists.";
             } else {
                 die("Error: " . $e->getMessage());
